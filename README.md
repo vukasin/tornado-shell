@@ -1,7 +1,7 @@
 tornado-shell
 =============
 
-A interactive shell for tornado processes
+A interactive shell for tornado processes. **The commands are executed INSIDE the main IOLoop so blocking calls will cause the IOLoop to block.**
 
 Here's a code example. This will open a prompt where you can interact with the system. A variable named 'ioloop' will be visible.
 
