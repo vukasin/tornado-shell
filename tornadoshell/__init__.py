@@ -1,6 +1,4 @@
-import functools
 import traceback
-import tornado
 import sys
 from tornado.iostream import PipeIOStream
 import pprint
@@ -27,7 +25,6 @@ class Shell(object):
         self.running = True
         self.stdout.write(b"\r$>")
         self.stdin.read_until(b'\n', self.on_line)
-
 
     def on_line(self, chunk_bytes: bytes):
         chunk = chunk_bytes.decode('utf-8', errors='ignore').rstrip('\n')
@@ -56,6 +53,4 @@ class Shell(object):
             raise
         except:
             traceback.print_exc()
-
-
 
