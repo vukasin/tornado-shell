@@ -1,15 +1,15 @@
-import functools
 import traceback
-import tornado
 import sys
-from tornado.iostream import PipeIOStream
 import pprint
+
+from tornado.iostream import PipeIOStream
+
 
 __author__ = 'vukasin'
 
 
 class Shell(object):
-    def __init__( self, stdin=sys.stdin, stdout=sys.stdout, context: dict={}):
+    def __init__(self, stdin=sys.stdin, stdout=sys.stdout, context: dict={}):
         """
         Create a new shell.
 
@@ -28,7 +28,6 @@ class Shell(object):
         self.stdout.write(b"\r$>")
         self.stdin.read_until(b'\n', self.on_line)
 
-
     def on_line(self, chunk_bytes: bytes):
         chunk = chunk_bytes.decode('utf-8', errors='ignore').rstrip('\n')
         if not chunk.endswith('\\'):
@@ -45,7 +44,7 @@ class Shell(object):
     def on_command(self, command):
         try:
             if command:
-                code = compile(command + '\n', '<shell>', 'eval')
+                code = compile(command + '\n', '<shell>', 'single')
                 res = eval(code, self.context)
                 if res is not None:
                     r = pprint.pformat(res).encode('utf-8')
@@ -56,6 +55,4 @@ class Shell(object):
             raise
         except:
             traceback.print_exc()
-
-
 
