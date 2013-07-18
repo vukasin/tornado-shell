@@ -1,6 +1,7 @@
 import traceback
 import sys
 import pprint
+import tornado.gen
 
 from tornado.iostream import PipeIOStream
 
@@ -41,6 +42,7 @@ class Shell(object):
         if self.running:
             self.start()
 
+    @tornado.gen.engine
     def on_command(self, command):
         try:
             if command:
@@ -48,11 +50,9 @@ class Shell(object):
                 res = eval(code, self.context)
                 if res is not None:
                     r = pprint.pformat(res).encode('utf-8')
-                    self.stdout.write(r + b'\n')
+                    yield tornado.gen.Task(self.stdout.write, r + b'\n')
         except SystemExit:
             raise
-        except SystemError:
-            raise
         except:
-            traceback.print_exc()
+            yield tornado.gen.Task(self.stdout.write, traceback.format_exc().encode('utf-8'))
 
